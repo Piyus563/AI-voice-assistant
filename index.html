@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Piyush- Smart Dictation Tool</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <main class="main-container">
+        
+        <header class="header">
+            <h1>🎙️ Piyush</h1>
+            <p>Smart Multilingual Dictation Tool</p>
+        </header>
+
+        <nav class="tabs" aria-label="Language Selector">
+            <button class="tab-btn active" onclick="changeLang('hi-IN', this)">🇮🇳 Hindi</button>
+            <button class="tab-btn" onclick="changeLang('en-US', this)">🇺🇸 English</button>
+            <button class="tab-btn" onclick="changeLang('ja-JP', this)">🇯🇵 Japanese</button>
+            <button class="tab-btn" onclick="changeLang('es-ES', this)">🇪🇸 Spanish</button>
+            <button class="tab-btn" onclick="changeLang('ko-KR', this)">🇰🇷 Korean</button>
+            <button class="tab-btn" onclick="changeLang('zh-CN', this)">🇨🇳 Chinese</button>
+            <button class="tab-btn" onclick="changeLang('fr-FR', this)">🇫🇷 French</button>
+            <button class="tab-btn" onclick="changeLang('de-DE', this)">🇩🇪 German</button>
+            <button class="tab-btn" onclick="changeLang('pt-BR', this)">🇧🇷 Portuguese</button>
+            <button class="tab-btn" onclick="changeLang('ru-RU', this)">🇷🇺 Russian</button>
+            <button class="tab-btn" onclick="changeLang('ar-SA', this)">🇸🇦 Arabic</button>
+            <button class="tab-btn" onclick="changeLang('it-IT', this)">🇮🇹 Italian</button>
+        </nav>
+
+        <section class="advanced-controls">
+            <div class="control-group">
+                <label>🎚️ Speech Speed: <span id="speed-value">1.0x</span></label>
+                <input type="range" id="speed-slider" min="0.5" max="2" step="0.1" value="1" oninput="updateSpeed(this.value)">
+            </div>
+            <div class="control-group">
+                <label>🔊 Volume: <span id="volume-value">100%</span></label>
+                <input type="range" id="volume-slider" min="0" max="100" value="100" oninput="updateVolume(this.value)">
+            </div>
+            <div class="control-group">
+                <label>📝 Font Size: <span id="font-value">18px</span></label>
+                <input type="range" id="font-slider" min="14" max="32" value="18" oninput="updateFontSize(this.value)">
+            </div>
+        </section>
+
+        <section class="display-area">
+            <div id="output-text" aria-live="polite" contenteditable="true">
+                The voice will be converted into text here...
+            </div>
+            <div id="word-count">Words: 0 | Characters: 0</div>
+        </section>
+
+        <section class="controls">
+            <button id="toggle-btn" class="btn btn-start" onclick="handleMic()">🎤 Start</button>
+            <button class="btn btn-read" onclick="handleSpeak()">🔊 Read Out</button>
+            <button class="btn btn-pause" onclick="handlePause()">⏸️ Pause</button>
+            <button class="btn btn-reset" onclick="handleReset()">🗑️ Reset</button>
+        </section>
+
+        <section class="extra-controls">
+            <button class="btn btn-copy" onclick="copyText()">📋 Copy</button>
+            <button class="btn btn-save" onclick="saveText()">💾 Save TXT</button>
+            <button class="btn btn-translate" onclick="translateText()">🌐 Translate</button>
+            <button class="btn btn-summary" onclick="summarizeText()">📊 Summarize</button>
+        </section>
+
+        <footer class="footer">
+            <div id="status-label">Mode: Idle</div>
+            <div id="confidence-score">Confidence: --</div>
+            <button onclick="exportPDF()" class="export-pdf-btn">📄 Export PDF</button>
+        </footer>
+
+        <div id="history-panel" class="history-panel">
+            <h3>📜 History <button onclick="toggleHistory()" class="close-btn">✕</button></h3>
+            <div id="history-list"></div>
+        </div>
+        <button class="history-toggle" onclick="toggleHistory()">📜</button>
+    </main>
+
+    <script src="script.js"></script>
+</body>
+</html>
