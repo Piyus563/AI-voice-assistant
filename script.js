@@ -3,6 +3,7 @@ let isPaused = false;
 let currentLang = 'hi-IN';
 let speechSpeed = 1.0;
 let speechVolume = 1.0;
+let finalTranscriptGlobal = "";
 const outputText = document.getElementById('output-text');
 const statusLabel = document.getElementById('status-label');
 const toggleBtn = document.getElementById('toggle-btn');
@@ -14,55 +15,101 @@ let history = JSON.parse(localStorage.getItem('transcriptHistory')) || [];
 const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
 
 if (!SpeechRecognition) {
-    alert("Web Speech API is not supported in this browser. Please use Chrome or Edge.");
+    alert("Web Speech API is not supported in this browser. Please use Chrome or Safari.");
 }
 
 const recognition = new SpeechRecognition();
-recognition.continuous = true;
+recognition.continuous = false;
 recognition.interimResults = true;
-recognition.lang = currentLang; // Initial language set
+recognition.lang = currentLang;
 
 // 2. Real-time Result Handling
 recognition.onresult = (event) => {
-    let finalTranscript = "";
+    let interimTranscript = "";
     let confidence = 0;
-    for (let i = 0; i < event.results.length; i++) {
-        finalTranscript += event.results[i][0].transcript;
-        confidence = event.results[i][0].confidence;
+    
+    for (let i = event.resultIndex; i < event.results.length; i++) {
+        const transcript = event.results[i][0].transcript;
+        if (event.results[i].isFinal) {
+            finalTranscriptGlobal += transcript + " ";
+            confidence = event.results[i][0].confidence;
+        } else {
+            interimTranscript += transcript;
+        }
     }
-    outputText.innerText = finalTranscript;
+    
+    outputText.innerText = finalTranscriptGlobal + interimTranscript;
     outputText.style.color = "var(--text-main)";
     outputText.style.fontStyle = "normal";
-    confidenceScore.innerText = `Confidence: ${(confidence * 100).toFixed(0)}%`;
+    
+    if (confidence > 0) {
+        confidenceScore.innerText = `Confidence: ${(confidence * 100).toFixed(0)}%`;
+    }
     updateWordCount();
 };
 
-// 3. Auto-Restart Logic (For continuous listening)
+// 3. Auto-Restart Logic (For continuous listening on mobile)
 recognition.onend = () => {
     if (isListening) {
-        recognition.start();
+        try {
+            recognition.start();
+        } catch (err) {
+            console.log("Restart attempt", err);
+        }
+    }
+};
+
+recognition.onerror = (event) => {
+    console.error("Speech recognition error:", event.error);
+    if (event.error === 'no-speech') {
+        if (isListening) {
+            setTimeout(() => {
+                try {
+                    recognition.start();
+                } catch (err) {
+                    console.log("Error restarting", err);
+                }
+            }, 100);
+        }
+    } else if (event.error === 'aborted' || event.error === 'audio-capture') {
+        statusLabel.innerText = "Mode: Microphone Error";
+        isListening = false;
+        updateMicUI(false);
     }
 };
 
 // 4. Handle Language Change
 function changeLang(lang, btn) {
-    currentLang = lang;
-    recognition.lang = lang; // API language update
+    const wasListening = isListening;
+    if (isListening) {
+        recognition.stop();
+        isListening = false;
+    }
     
-    // UI Update for Tabs
+    currentLang = lang;
+    recognition.lang = lang;
+    
     document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
     btn.classList.add('active');
+    
+    if (wasListening) {
+        setTimeout(() => {
+            handleMic();
+        }, 300);
+    }
 }
 
 // 5. Mic Control with UI Feedback
 function handleMic() {
     if (!isListening) {
         try {
+            finalTranscriptGlobal = "";
             recognition.start();
             isListening = true;
             updateMicUI(true);
         } catch (err) {
             console.error("Recognition error: ", err);
+            alert("Please allow microphone access to use voice recognition.");
         }
     } else {
         recognition.stop();
@@ -107,6 +154,7 @@ function handleSpeak() {
 function handleReset() {
     recognition.stop();
     isListening = false;
+    finalTranscriptGlobal = "";
     outputText.innerText = "The voice will be converted into text here...";
     outputText.style.color = "var(--text-dim)";
     outputText.style.fontStyle = "italic";
