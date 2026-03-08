@@ -429,42 +429,121 @@ body::after {
 }
 
 @media (max-width: 768px) {
+    body {
+        padding: 10px;
+    }
+
     .header h1 {
-        font-size: 2.5rem;
+        font-size: 2.2rem;
+        letter-spacing: -1px;
+    }
+
+    .header p {
+        font-size: 0.9rem;
     }
 
     .tabs {
-        padding: 12px;
-        gap: 8px;
+        padding: 10px;
+        gap: 6px;
     }
 
     .tab-btn {
-        padding: 8px 16px;
+        padding: 8px 12px;
+        font-size: 0.8rem;
+    }
+
+    .advanced-controls {
+        padding: 15px;
+        grid-template-columns: 1fr;
+        gap: 15px;
+    }
+
+    .control-group label {
         font-size: 0.85rem;
     }
 
     .display-area {
-        padding: 25px;
-        min-height: 220px;
+        padding: 20px;
+        min-height: 180px;
     }
 
     #output-text {
-        font-size: 1rem;
+        font-size: 16px;
+        min-height: 150px;
     }
 
-    .controls {
+    #word-count {
+        font-size: 0.75rem;
+    }
+
+    .controls, .extra-controls {
         flex-direction: column;
-        gap: 12px;
+        gap: 10px;
     }
 
     .btn {
         width: 100%;
         justify-content: center;
+        padding: 12px 20px;
+        font-size: 0.9rem;
+    }
+
+    .btn-copy, .btn-save, .btn-translate, .btn-summary {
+        padding: 12px 20px;
+        font-size: 0.85rem;
     }
 
     .footer {
         flex-direction: column;
-        gap: 15px;
+        gap: 12px;
         text-align: center;
+        padding: 15px 20px;
+    }
+
+    #status-label, #confidence-score {
+        font-size: 0.85rem;
+    }
+
+    .export-pdf-btn {
+        width: 100%;
+        padding: 12px 20px;
+        font-size: 0.85rem;
+    }
+
+    .history-panel {
+        width: 100%;
+        right: -100%;
+    }
+
+    .history-toggle {
+        width: 50px;
+        height: 50px;
+        font-size: 1.2rem;
+        right: 15px;
+        bottom: 15px;
+    }
+}
+
+@media (max-width: 480px) {
+    .header h1 {
+        font-size: 1.8rem;
+    }
+
+    .tab-btn {
+        padding: 6px 10px;
+        font-size: 0.75rem;
+    }
+
+    .display-area {
+        padding: 15px;
+    }
+
+    #output-text {
+        font-size: 14px;
+    }
+
+    .btn {
+        padding: 10px 16px;
+        font-size: 0.85rem;
     }
 }
